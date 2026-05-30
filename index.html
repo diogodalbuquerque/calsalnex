@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causal Network Explorer (DYNOTEARS) | Educational Demonstration</title>
+    <meta name="description" content="An interactive conceptual dashboard demonstrating Dynamic Bayesian Networks (DBNs) and causal structure learning using D3.js. Inspired by quantitative finance models.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- D3.js for Interactive Force-Directed Graph -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <span class="badge">CONCEPT DEMO</span>
+                <span class="logo-text">Causal <span class="accent-text">Explorer</span></span>
+            </div>
+            <nav class="main-nav" id="main-navigation">
+                <button class="nav-btn active" id="btn-dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+                <button class="nav-btn" id="btn-wqu" onclick="switchTab('wqu')">Concepts & Credits</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+
+        <!-- Dashboard Tab -->
+        <section id="tab-dashboard" class="tab-content active">
+            <!-- Hero Title -->
+            <div class="hero-section">
+                <h1>Dynamic Bayesian Networks & Causal Modeling</h1>
+                <p class="hero-subtitle">Exploring causal relationships, lagged connections, and propagation paths in time-series networks</p>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="control-panel glassmorphism">
+                <div class="control-group">
+                    <label for="select-dataset" class="control-label">Select Simulation Model</label>
+                    <div class="select-wrapper">
+                        <select id="select-dataset" onchange="loadSelectedDataset()">
+                            <option value="financials">Financial System Interconnectedness (10 Assets)</option>
+                            <option value="simulated">Simple Time-Series Network (5 Nodes)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group slider-group">
+                    <div class="slider-header">
+                        <label for="threshold-range" class="control-label">Connection Weight Threshold</label>
+                        <span id="threshold-val" class="badge-value">0.15</span>
+                    </div>
+                    <input type="range" id="threshold-range" min="0.0" max="0.8" step="0.01" value="0.15" oninput="updateThreshold(this.value)">
+                    <span class="slider-hint">Filters out connections below this causal strength absolute value.</span>
+                </div>
+
+                <div class="stats-group">
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-nodes">0</span>
+                        <span class="stat-label">Active Nodes</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num" id="stat-edges">0</span>
+                        <span class="stat-label">Active Edges</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Grid -->
+            <div class="visualization-grid">
+                
+                <!-- Graph Visualization Container -->
+                <div class="card viz-card glassmorphism">
+                    <div class="card-header">
+                        <h2>Interactive Causal Graph Model</h2>
+                        <span class="card-tag tag-graph">Interactive D3 Network</span>
+                    </div>
+                    <p class="card-desc">Drag nodes to explore structure. Orange nodes represent past states (_lag1). Blue nodes represent present states (_lag0). Arrow direction points from cause to effect.</p>
+                    <div class="graph-viewport-wrapper">
+                        <div id="graph-viewport" class="viewport"></div>
+                        <div class="legend">
+                            <div class="legend-item"><span class="dot dot-lag1"></span> Past State (_lag1)</div>
+                            <div class="legend-item"><span class="dot dot-lag0"></span> Present State (_lag0)</div>
+                            <div class="legend-item"><span class="line line-positive"></span> Positive Weight</div>
+                            <div class="legend-item"><span class="line line-negative"></span> Negative Weight</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info and Heatmap Container -->
+                <div class="card side-card glassmorphism">
+                    <div class="card-header">
+                        <h2>Adjacency & Impact Details</h2>
+                        <span class="card-tag tag-stats">Live Metrics</span>
+                    </div>
+
+                    <!-- Highlighted Entity Details -->
+                    <div id="details-panel" class="details-panel-content">
+                        <div class="empty-details-state">
+                            <svg class="info-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p>Hover or click on any node in the graph to inspect its direct causes and downstream effects.</p>
+                            <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">💡 Drag nodes to reposition them and dynamically reorganize the graph layout.</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Heatmap Area -->
+                    <div class="heatmap-section">
+                        <h3>Connection Adjacency Heatmap</h3>
+                        <p class="section-desc">Visualizes active causal weights. Hover over grid cells to read individual connection values.</p>
+                        <div class="heatmap-container-wrapper">
+                            <div id="heatmap-container"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- WQU & Concepts Tab -->
+        <section id="tab-wqu" class="tab-content">
+            <div class="hero-section">
+                <h1>Dynamic Causal Network Modeling</h1>
+                <p class="hero-subtitle">Conceptual Framework and Acknowledgment</p>
+            </div>
+
+            <div class="wqu-grid">
+                <!-- Theory Card -->
+                <div class="card info-card glassmorphism">
+                    <h2>DYNOTEARS Concept Overview</h2>
+                    <p>Causal structure learning from time-series data utilizes <strong>Dynamic Bayesian Networks (DBNs)</strong> to map connections across temporal states. The <strong>DYNOTEARS</strong> (Dynamic NOTEARS) algorithm extends structural learning by formulating DBN parameters into a continuous optimization problem with algebraic acyclicity constraints.</p>
+                    
+                    <h3>Key Visual Mechanisms:</h3>
+                    <p><strong>1. Lagged Connections (Past-to-Present):</strong> Directed edges that run from <code>_lag1</code> to <code>_lag0</code> nodes. These show how historical fluctuations in one node influence the present value of another, confirming traditional understandings of causality where past events trigger present consequences.</p>
+                    <p><strong>2. Intra-Slice Connections (Present-to-Present):</strong> Causal paths between nodes in the same time frame (<code>_lag0</code> to <code>_lag0</code>). An acyclicity constraint prevents loops, reflecting instant contagion paths without retroactively affecting the past.</p>
+                    <p><strong>3. Thresholding:</strong> Causal learning algorithms generate dense networks including weak, noisy relationships. Setting a threshold filter allows analysts to isolate the core systemic structure and trace propagation pathways clearly.</p>
+                </div>
+
+                <!-- Credits / Acknowledgment Card -->
+                <div class="card info-card glassmorphism">
+                    <h2>Credits & Acknowledgment</h2>
+                    <p>The concepts, logic, and analytical methods demonstrated in this simulation are based on the quantitative finance training and coursework offered by <strong>WorldQuant University (WQU)</strong>. We express our sincere appreciation for the knowledge obtained from WQU.</p>
+                    
+                    <div class="info-stats">
+                        <div class="info-stat-box">
+                            <span class="info-stat-num">25k+</span>
+                            <span class="info-stat-lbl">Active Students</span>
+                        </div>
+                        <div class="info-stat-box">
+                            <span class="info-stat-num">150+</span>
+                            <span class="info-stat-lbl">Countries Served</span>
+                        </div>
+                        <div class="info-stat-box">
+                            <span class="info-stat-num">Free</span>
+                            <span class="info-stat-lbl">Tuition-Free Education</span>
+                        </div>
+                    </div>
+
+                    <h3>WQU Profile</h3>
+                    <p><strong>WorldQuant University</strong> is a tuition-free, non-profit online educational institution based in Washington, D.C. Founded in 2015 by Igor Tulchinsky (founder of the quantitative investment firm WorldQuant), the university is built on the premise that <em>"talent is global, but opportunity is not."</em> Sponsored by the WorldQuant Foundation, WQU is accredited by the Distance Education Accrediting Commission (DEAC).</p>
+                </div>
+
+                <!-- Academic Offerings -->
+                <div class="card full-width-card glassmorphism">
+                    <h2>Academic Offerings & Programs</h2>
+                    <div class="programs-wrapper">
+                        <div class="program-item">
+                            <h3>MSc in Financial Engineering</h3>
+                            <p>A rigorous, two-year, fully online curriculum combining mathematical theory, stats, programming, and financial instruments. Includes nine graduate courses and a collaborative capstone project.</p>
+                            <span class="tag-req">Requires Bachelor's & Quantitative test</span>
+                        </div>
+                        <div class="program-item">
+                            <h3>Applied AI Graduate Certificate</h3>
+                            <p>Designed for professionals looking to implement machine learning pipelines, deep learning, and advanced AI methodologies across business domains.</p>
+                            <span class="tag-req">DEAC Accredited Graduate Level</span>
+                        </div>
+                        <div class="program-item">
+                            <h3>Technical Learning Labs</h3>
+                            <p>Free, self-paced, short courses focusing on practical, industry-applicable skills like Applied Data Science, Deep Learning, and Computer Vision.</p>
+                            <span class="tag-req">No prior degree required</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 Causal Network Explorer Project. Built utilizing knowledge obtained from WorldQuant University.</p>
+            <p class="credits-text">Project created as an educational demonstration of DBNs. Causal structure methodologies inspired by the WQU MScFE Risk Management curriculum.</p>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script src="app.js"></script>
+</body>
+</html>

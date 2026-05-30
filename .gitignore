@@ -1,0 +1,16 @@
+# Ignore virtual environment
+venv/
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+.DS_Store
+
+# Ignore WQU Course Materials & Local Datasets
+Project.ipynb
+SnP100.csv
+causalnex-0.12.1.tar.gz
+daily_returns.pkl
+daily_returns_2.pkl
+dbn_learnt.jpg
+network_data.json
