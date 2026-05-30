@@ -8,8 +8,13 @@ let g = null; // zoom container
 
 // Generate Mock DBN data in memory to comply with WQU Academic Integrity Policy
 function generateMockDBNData() {
-    // 1. Generate Simulated Financial Interconnectedness Network (10 assets)
-    const finTickers = ['AIG', 'BAC', 'C', 'GS', 'JPM', 'WFC', 'AXP', 'COF', 'MS', 'USB'];
+    // 1. Generate Simulated Financial Interconnectedness Network (20 B3 Brazilian Assets)
+    const finTickers = [
+        'VALE3', 'PETR4', 'ITUB4', 'BBDC4', 'BBAS3', 
+        'ABEV3', 'WEGE3', 'ITSA4', 'B3SA3', 'JBSS3', 
+        'SUZB3', 'GGBR4', 'CSAN3', 'RENT3', 'LREN3', 
+        'BPAC11', 'VIVT3', 'ELET3', 'RADL3', 'EQTL3'
+    ];
     const finNodes = [];
     finTickers.forEach(t => {
         finNodes.push(`${t}_lag0`);
@@ -26,19 +31,25 @@ function generateMockDBNData() {
         });
     });
     
-    // Core structural relationships mimicking systemic contagion paths
-    // AIG (historical state) acts as a causal driver to multiple present-day universal banks
-    finEdges.push({ source: 'AIG_lag1', target: 'BAC_lag0', weight: 0.418 });
-    finEdges.push({ source: 'AIG_lag1', target: 'C_lag0', weight: 0.364 });
-    finEdges.push({ source: 'AIG_lag1', target: 'JPM_lag0', weight: 0.295 });
-    finEdges.push({ source: 'AIG_lag1', target: 'WFC_lag0', weight: 0.321 });
+    // Core structural relationships mimicking systemic contagion paths in Brazil market
+    // PETR4 (Petrobras) and ITUB4 (Itaú) act as causal drivers in the system
+    finEdges.push({ source: 'PETR4_lag1', target: 'VALE3_lag0', weight: 0.421 });
+    finEdges.push({ source: 'PETR4_lag1', target: 'CSAN3_lag0', weight: 0.352 });
+    finEdges.push({ source: 'PETR4_lag1', target: 'GGBR4_lag0', weight: 0.315 });
     
-    // Intra-slice dependencies (instant contagion routes)
-    finEdges.push({ source: 'BAC_lag0', target: 'C_lag0', weight: 0.534 });
-    finEdges.push({ source: 'BAC_lag0', target: 'WFC_lag0', weight: 0.448 });
-    finEdges.push({ source: 'GS_lag0', target: 'MS_lag0', weight: 0.646 });
-    finEdges.push({ source: 'COF_lag0', target: 'AXP_lag0', weight: 0.452 });
-    finEdges.push({ source: 'USB_lag0', target: 'BAC_lag0', weight: 0.449 });
+    finEdges.push({ source: 'ITUB4_lag1', target: 'BBDC4_lag0', weight: 0.485 });
+    finEdges.push({ source: 'ITUB4_lag1', target: 'BBAS3_lag0', weight: 0.412 });
+    finEdges.push({ source: 'ITUB4_lag1', target: 'BPAC11_lag0', weight: 0.364 });
+    
+    finEdges.push({ source: 'ELET3_lag1', target: 'EQTL3_lag0', weight: 0.392 });
+    finEdges.push({ source: 'RENT3_lag1', target: 'LREN3_lag0', weight: 0.345 });
+    
+    // Intra-slice dependencies (instant correlation/contagion routes)
+    finEdges.push({ source: 'ITUB4_lag0', target: 'ITSA4_lag0', weight: 0.648 }); // Itaú to Itaúsa
+    finEdges.push({ source: 'PETR4_lag0', target: 'VALE3_lag0', weight: 0.512 }); // Petrobras to Vale
+    finEdges.push({ source: 'BBDC4_lag0', target: 'BBAS3_lag0', weight: 0.435 }); // Bradesco to Banco do Brasil
+    finEdges.push({ source: 'RENT3_lag0', target: 'LREN3_lag0', weight: 0.328 }); // Localiza to Renner
+    finEdges.push({ source: 'JBSS3_lag0', target: 'SUZB3_lag0', weight: 0.294 }); // JBS to Suzano
     
     // Add additional random relationships to make slider interactive
     const random = (seed) => {
@@ -47,7 +58,7 @@ function generateMockDBNData() {
     };
     
     let seed = 12345;
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 35; i++) {
         const srcIdx = Math.floor(random(seed++) * finNodes.length);
         const tgtIdx = Math.floor(random(seed++) * finNodes.length);
         const src = finNodes[srcIdx];
