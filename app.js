@@ -6,6 +6,35 @@ let simulation = null;
 let svg = null;
 let g = null; // zoom container
 
+// Company mapping for B3 Brazilian stocks and simulated nodes
+const companyNames = {
+    'VALE3': 'Vale S.A. (Mining & Metals)',
+    'PETR4': 'Petrobras S.A. (Oil, Gas & Energy)',
+    'ITUB4': 'Itaú Unibanco Holding S.A. (Banking)',
+    'BBDC4': 'Banco Bradesco S.A. (Banking)',
+    'BBAS3': 'Banco do Brasil S.A. (Banking)',
+    'ABEV3': 'Ambev S.A. (Beverages & Brewing)',
+    'WEGE3': 'WEG S.A. (Electric Motors & Industrial Automation)',
+    'ITSA4': 'Itaúsa S.A. (Financial Investment Holding)',
+    'B3SA3': 'B3 S.A. - Brasil, Bolsa, Balcão (Stock Exchange)',
+    'JBSS3': 'JBS S.A. (Food Processing & Agriculture)',
+    'SUZB3': 'Suzano S.A. (Pulp & Paper Manufacturing)',
+    'GGBR4': 'Gerdau S.A. (Steelmaking)',
+    'CSAN3': 'Cosan S.A. (Energy, Logistics & Biofuels)',
+    'RENT3': 'Localiza Rent a Car S.A. (Car Rental & Fleet)',
+    'LREN3': 'Lojas Renner S.A. (Fashion & Department Retail)',
+    'BPAC11': 'BTG Pactual S.A. (Investment Banking & Asset Management)',
+    'VIVT3': 'Telefônica Brasil S.A. / Vivo (Telecommunications)',
+    'ELET3': 'Centrais Elétricas Brasileiras S.A. - Eletrobras (Power Utility)',
+    'RADL3': 'Raia Drogasil S.A. (Pharmacy & Healthcare Retail)',
+    'EQTL3': 'Equatorial Energia S.A. (Power Transmission & Utility)',
+    'Node0': 'Simulated Causal Factor 0',
+    'Node1': 'Simulated Causal Factor 1',
+    'Node2': 'Simulated Causal Factor 2',
+    'Node3': 'Simulated Causal Factor 3',
+    'Node4': 'Simulated Causal Factor 4'
+};
+
 // Generate Mock DBN data in memory to comply with WQU Academic Integrity Policy
 function generateMockDBNData() {
     // 1. Generate Simulated Financial Interconnectedness Network (20 B3 Brazilian Assets)
@@ -362,10 +391,16 @@ function showDetailsPanel(node, activeEdges) {
     const incoming = activeEdges.filter(e => e.target === node.id);
     const outgoing = activeEdges.filter(e => e.source === node.id);
     
+    const ticker = node.id.split('_')[0];
+    const companyName = companyNames[ticker] || 'Simulated Causal Factor';
+    
     let html = `
         <div class="node-title">
             <span class="node-title-badge ${node.type}">${node.type === 'lag0' ? 'PRESENT' : 'PAST'}</span>
             <h3>${node.id}</h3>
+        </div>
+        <div style="font-size: 0.8rem; font-weight: 600; color: var(--color-lag0); margin-bottom: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.02em;">
+            ${companyName}
         </div>
     `;
     
