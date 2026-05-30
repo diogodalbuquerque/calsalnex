@@ -19,3 +19,12 @@ This project is a self-contained, interactive frontend simulation tool built wit
 
 ## Acknowledgments & Credits
 The conceptual framework and methodologies demonstrated in this simulator are inspired by quantitative analysis models learned during studies with **WorldQuant University (WQU)**. WQU is a tuition-free, non-profit online institution specializing in quantitative education. We express our sincere gratitude for the knowledge obtained from WQU.
+
+## References
+
+* Ferreira, Gabriel Azevedo. "I Have a Question about Dynotears." PyPI Project Package Documentation, [https://pypi.org/project/causalnex/](https://pypi.org/project/causalnex/).
+* Pamfil, Roxana, et al. "DYNOTEARS: Structure Learning from Time-Series Data." arXiv, 27 Apr 2020, [https://arxiv.org/abs/2002.00498](https://arxiv.org/abs/2002.00498).
+
+---
+
+*Acknowledgment: This project was built utilizing the knowledge and materials obtained from WorldQuant University.*
